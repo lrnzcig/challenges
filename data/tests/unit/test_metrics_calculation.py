@@ -4,9 +4,9 @@ from collections import Counter
 import numpy as np
 
 from pyspark.sql import SparkSession
-import pyspark.sql.functions as F
 
 from utils.metrics_calculation import metrics_calculation
+
 
 class MetricsCalculationTest(unittest.TestCase):
 
@@ -45,13 +45,17 @@ class MetricsCalculationTest(unittest.TestCase):
     def setUpClass(cls):
         cls.spark = SparkSession.builder.appName('test').getOrCreate()
         json_list = cls.read_input_file(
-            "../data/input/datehour=2021-01-23-10/part-00000-9b503de5-0d72-4099-a388-7fdcf6e16edb.c000.json"
+            "tests/data/input/datehour=2021-01-23-10/part-00000-9b503de5-0d72-4099-a388-7fdcf6e16edb.c000.json"
         )
         json_list.extend(cls.read_input_file(
-            "../data/input/datehour=2021-01-23-11/part-00000-3a6f210d-7806-462e-b32c-344dff538d70.c000.json"
+            "tests/data/input/datehour=2021-01-23-11/part-00000-3a6f210d-7806-462e-b32c-344dff538d70.c000.json"
         ))
         cls.input_df = cls.spark.createDataFrame(json_list)
         cls.ref_dedupl = [i for n, i in enumerate(json_list) if i['id'] not in [j['id'] for j in json_list[n + 1:]]]
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.spark.stop()
 
     def test_base(self):
         result = metrics_calculation(self.input_df).collect()

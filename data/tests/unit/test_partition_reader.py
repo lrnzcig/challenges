@@ -39,8 +39,8 @@ class TestPartitionReader(unittest.TestCase):
 
         # input files and upload to mocked bucket
         cls.input_files = [
-            "../data/input/datehour=2021-01-23-10/part-00000-9b503de5-0d72-4099-a388-7fdcf6e16edb.c000.json",
-            "../data/input/datehour=2021-01-23-11/part-00000-3a6f210d-7806-462e-b32c-344dff538d70.c000.json"
+            "tests/data/input/datehour=2021-01-23-10/part-00000-9b503de5-0d72-4099-a388-7fdcf6e16edb.c000.json",
+            "tests/data/input/datehour=2021-01-23-11/part-00000-3a6f210d-7806-462e-b32c-344dff538d70.c000.json"
         ]
 
         cls.s3_client = get_s3_client("http://127.0.0.1:5000")
@@ -57,6 +57,10 @@ class TestPartitionReader(unittest.TestCase):
         # some expected values for convinience
         cls.input_files_bucket = ['/'.join([BUCKET_PREFIX] + el.split('/')[-2:]) for el in cls.input_files]
         cls.expected_output_columns = sorted(['id', 'datetime', 'domain', 'type', 'user', 'datehour', 'token'])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.spark.stop()
 
     def test_get_s3_file_list(self):
         file_list = get_s3_file_list(self.s3_client, BUCKET_NAME, BUCKET_PREFIX)

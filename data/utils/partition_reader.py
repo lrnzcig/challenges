@@ -7,7 +7,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql import DataFrame
 
 
-def get_s3_client(endpoint_url: str) -> botocore.client.BaseClient:
+def get_s3_client(endpoint_url: str = None) -> botocore.client.BaseClient:
     """
     creates s3 client
 
